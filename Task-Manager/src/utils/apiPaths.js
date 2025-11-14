@@ -1,4 +1,5 @@
-export const BASE_URL = "http://localhost:8000";
+// export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = "https://project-akhir-be-production.up.railway.app";
 
 //utils/apipath.js
 export const API_PATHS = {
