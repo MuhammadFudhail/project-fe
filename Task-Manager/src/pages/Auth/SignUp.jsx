@@ -68,7 +68,7 @@ const SignUp = () => {
       // Upload profile picture if available
       if (profilePic) {
         const uploadedUrl = await uploadImage(profilePic);
-        console.log("Image Upload Response:", imgUploadRes);
+        console.log("Image Upload Response:", uploadedUrl);
         profileImageUrl = uploadedUrl;
       }
 
