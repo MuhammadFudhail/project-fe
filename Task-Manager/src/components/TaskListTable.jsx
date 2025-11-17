@@ -2,6 +2,8 @@ import React from "react";
 import moment from "moment";
 
 const TaskListTable = ({ tableData }) => {
+  console.log("Data yang diterima TaskListTable:", tableData);
+  
   const getStatusBadgeColor = (status) => {
     switch (status) {
       case "Completed":

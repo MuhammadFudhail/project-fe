@@ -20,10 +20,16 @@ const Dashboard = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
+  const role = localStorage.getItem("role"); // Admin / User
+  const division = localStorage.getItem("division");
+
   const [dashboardData, setDashboardData] = useState(null);
   const [pieChartData, setPieChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
 
+  // -----------------------------
+  // PREPARE CHART DATA
+  // -----------------------------
   const prepareChartData = (charts = {}) => {
     const taskDistribution = charts.taskDistribution || {};
     const taskPriorityLevels = charts.taskPrioritiesLevels || {};
@@ -43,9 +49,20 @@ const Dashboard = () => {
     setBarChartData(priorityLevelData);
   };
 
+  // -----------------------------
+  // GET DASHBOARD DATA
+  // -----------------------------
   const getDashboardData = async () => {
     try {
-      const response = await axiosInstance.get(API_PATHS.TASKS.GET_DASHBOARD_DATA);
+      // Bila Admin → ambil semua data
+      // Bila User → ambil data berdasarkan divisinya
+      const endpoint =
+        role === "Admin"
+          ? API_PATHS.TASKS.GET_DASHBOARD_DATA
+          : API_PATHS.TASKS.GET_USER_DASHBOARD_DATA;
+
+      const response = await axiosInstance.get(endpoint);
+
       if (response.data) {
         setDashboardData(response.data);
         prepareChartData(response.data.charts || {});
@@ -63,6 +80,9 @@ const Dashboard = () => {
     navigate("/admin/tasks");
   };
 
+  // -----------------------------
+  // UI
+  // -----------------------------
   return (
     <DashboardLayout activeMenu="Dashboard">
       {/* Header Section */}
@@ -79,15 +99,18 @@ const Dashboard = () => {
         {/* Animated motivational text */}
         <div className="w-full overflow-hidden whitespace-nowrap mt-4 h-10 flex items-center">
           <div className="inline-block animate-marquee text-sm font-semibold opacity-90">
-            💪 Semangat kerja hari ini! Jaga fokus, tetap produktif, dan jangan lupa istirahat 🚀
+            💪 Semangat kerja hari ini! Jaga fokus, tetap produktif, dan jangan
+            lupa istirahat 🚀
           </div>
         </div>
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mt-6">
-         <InfoCard
+          <InfoCard
             label="Total Tasks"
-            value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.All || 0)}
+            value={addThousandSeparator(
+              dashboardData?.charts?.taskDistribution?.All || 0
+            )}
             color="bg-black text-gray-800 border border-gray-100 shadow-md hover:shadow-lg hover:scale-[1.02]"
             icon={
               <svg
@@ -97,14 +120,20 @@ const Dashboard = () => {
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-6h13M5 13v-2a2 2 0 012-2h3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 17v-6h13M5 13v-2a2 2 0 012-2h3"
+                />
               </svg>
             }
           />
 
           <InfoCard
             label="Pending"
-            value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Pending || 0)}
+            value={addThousandSeparator(
+              dashboardData?.charts?.taskDistribution?.Pending || 0
+            )}
             color="bg-yellow-500 text-yellow-800 border border-yellow-100 shadow-md hover:shadow-lg hover:scale-[1.02]"
             icon={
               <svg
@@ -115,14 +144,20 @@ const Dashboard = () => {
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4l3 3"
+                />
               </svg>
             }
           />
 
           <InfoCard
             label="In Progress"
-            value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.InProgress || 0)}
+            value={addThousandSeparator(
+              dashboardData?.charts?.taskDistribution?.InProgress || 0
+            )}
             color="bg-blue-500 text-blue-800 border border-blue-100 shadow-md hover:shadow-lg hover:scale-[1.02]"
             icon={
               <svg
@@ -133,14 +168,20 @@ const Dashboard = () => {
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v16h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 4v16h16"
+                />
               </svg>
             }
           />
 
           <InfoCard
             label="Completed"
-            value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
+            value={addThousandSeparator(
+              dashboardData?.charts?.taskDistribution?.Completed || 0
+            )}
             color="bg-green-500 text-green-800 border border-green-100 shadow-md hover:shadow-lg hover:scale-[1.02]"
             icon={
               <svg
@@ -151,7 +192,11 @@ const Dashboard = () => {
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             }
           />
@@ -177,7 +222,9 @@ const Dashboard = () => {
         <div className="md:col-span-2">
           <div className="shadow-md rounded-2xl bg-white p-5 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
-              <h5 className="text-lg font-semibold text-gray-800 tracking-wide">📝 Recent Tasks</h5>
+              <h5 className="text-lg font-semibold text-gray-800 tracking-wide">
+                📝 Recent Tasks
+              </h5>
               <button
                 className="flex items-center gap-2 bg-red-500 from-red-500 to-red-400 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold shadow-sm transition-all duration-300"
                 onClick={onSeeMore}
@@ -185,12 +232,13 @@ const Dashboard = () => {
                 See All <LuArrowRight className="text-lg" />
               </button>
             </div>
+
             <TaskListTable tableData={dashboardData?.recentTasks || []} />
           </div>
         </div>
       </div>
 
-      {/* Animasi marquee CSS */} 
+      {/* Animasi marquee CSS */}
       <style jsx>{`
         @keyframes marquee {
           0% {
