@@ -67,9 +67,9 @@ const SignUp = () => {
     try {
       // Upload profile picture if available
       if (profilePic) {
-        const imgUploadRes = await uploadImage(profilePic);
+        const uploadedUrl = await uploadImage(profilePic);
         console.log("Image Upload Response:", imgUploadRes);
-        profileImageUrl = imgUploadRes.imageUrl || "";
+        profileImageUrl = uploadedUrl;
       }
 
       // === Send data to backend ===
